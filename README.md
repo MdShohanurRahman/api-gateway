@@ -91,4 +91,4 @@ Example JSON Schema
     ```
 
 ## Usage
-Once the application is running, it will route incoming requests based on the configured paths and URIs. For example, a request to `/eInvoice-preprod-service/any-path` will be routed to https://preprod-api.myinvois.hasil.gov.my/any-path.
+Once the application is running, it will route incoming requests based on the configured paths and URIs. For example, a request to `/eInvoice-preprod-service/any-path` will be routed to `https://preprod-api.myinvois.hasil.gov.my/any-path`.
