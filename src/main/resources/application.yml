@@ -1,0 +1,35 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: liberty-api-gateway
+    api-route-json-path: ${API_ROUTE_JSON_PATH:json/apiRoute.json}
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: create-drop
+  datasource:
+    url: ${DATASOURCE_URL:jdbc:sqlite:gateway.db}
+    driver-class-name: ${DATASOURCE_DRIVER_CLASS_NAME:org.sqlite.JDBC}
+    username: ${DATASOURCE_USERNAME:admin}
+    password: ${DATASOURCE_PASSWORD:admin}
+
+  cloud:
+    gateway:
+      httpclient:
+        ssl:
+          use-insecure-trust-manager: true
+        wiretap: true
+      httpserver:
+        wiretap: true
+      default-filters: LoggingFilter
+
+logging:
+  level:
+    org:
+      zalando:
+        logbook: TRACE
+      springframework:
+        cloud:
+          gateway: TRACE
