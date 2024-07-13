@@ -18,5 +18,7 @@ public class ApiRoute {
     @Column(unique = true)
     private String path;
 
+    private String authKey;
+
     private String uri;
 }

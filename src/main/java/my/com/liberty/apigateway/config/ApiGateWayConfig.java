@@ -34,9 +34,12 @@ public class ApiGateWayConfig {
         for (ApiRoute route : apiRouteList) {
             routes.route(route.getId().toString(), r -> r
                     .path(route.getPath())
+                    .and()
+                    .header("AUTH-KEY", route.getAuthKey())
                     .filters(f -> f
                             .rewritePath(route.getPath().replace("**", "(?<remaining>.*)"), "/${remaining}")
-                            .filter(new CustomRouteFilter(dataInitService, route.getId())))
+                            .filter(new CustomRouteFilter(dataInitService, route.getId()))
+                    )
                     .uri(route.getUri()));
         }
 

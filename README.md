@@ -62,6 +62,7 @@ Example JSON Schema
 [
   {
     "path": "/eInvoice-preprod-service/**",
+    "authKey": "123",
     "uri": "https://preprod-api.myinvois.hasil.gov.my"
   }
 ]
