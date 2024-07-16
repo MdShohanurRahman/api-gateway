@@ -26,10 +26,18 @@ spring:
       default-filters: LoggingFilter
 
 logging:
+  file:
+    name: logs/api-gateway.log
   level:
+    root: INFO
     org:
       zalando:
         logbook: TRACE
       springframework:
         cloud:
           gateway: TRACE
+  logback:
+    rolling-policy:
+      max-history: 10
+      max-file-size: 10MB
+      file-name-pattern: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz

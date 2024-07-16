@@ -32,15 +32,24 @@ public class ApiGateWayConfig {
         List<ApiRoute> apiRouteList = routeRepository.findAll();
 
         for (ApiRoute route : apiRouteList) {
-            routes.route(route.getId().toString(), r -> r
-                    .path(route.getPath())
-                    .and()
-                    .header("AUTH-KEY", route.getAuthKey())
-                    .filters(f -> f
-                            .rewritePath(route.getPath().replace("**", "(?<remaining>.*)"), "/${remaining}")
-                            .filter(new CustomRouteFilter(dataInitService, route.getId()))
-                    )
-                    .uri(route.getUri()));
+            if (route.getAuthKey() != null && !route.getAuthKey().isEmpty()) {
+                routes.route(route.getId().toString(), r -> r
+                        .path(route.getPath())
+                        .and()
+                        .header("AUTH-KEY", route.getAuthKey())
+                        .filters(f -> f
+                                .rewritePath(route.getPath().replace("**", "(?<remaining>.*)"), "/${remaining}")
+                                .filter(new CustomRouteFilter(dataInitService, route.getId()))
+                        )
+                        .uri(route.getUri()));
+            } else {
+                routes.route(route.getId().toString(), r -> r
+                        .path(route.getPath())
+                        .filters(f -> f
+                                .rewritePath(route.getPath().replace("**", "(?<remaining>.*)"), "/${remaining}")
+                        )
+                        .uri(route.getUri()));
+            }
         }
 
         return routes.build();

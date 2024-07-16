@@ -18,7 +18,6 @@ public class AdminService {
         return apiRouteRepository.findAll();
     }
 
-
     public void refreshRestrictions() {
         dataInitService.refreshRestrictions();
     }
