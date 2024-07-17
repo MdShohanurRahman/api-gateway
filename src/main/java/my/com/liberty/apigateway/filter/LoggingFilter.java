@@ -21,17 +21,17 @@ public class LoggingFilter implements GlobalFilter {
         return chain.filter(exchange)
                 .tap(() -> new DefaultSignalListener<>() {
                     @Override
-                    public void doOnSubscription() throws Throwable {
+                    public void doOnSubscription() {
                         log.info("[{}] start in {}", exchange.getRequest().getPath(), LocalDateTime.now());
                     }
 
                     @Override
-                    public void doOnComplete() throws Throwable {
+                    public void doOnComplete() {
                         log.info("[{}] executed in {} ", exchange.getRequest().getPath(), LocalDateTime.now());
                     }
 
                     @Override
-                    public void doOnError(Throwable error) throws Throwable {
+                    public void doOnError(Throwable error) {
                         log.warn("[{}] errored in {}", exchange.getRequest().getPath(), LocalDateTime.now());
                     }
                 });

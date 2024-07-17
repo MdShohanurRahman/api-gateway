@@ -10,7 +10,6 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -26,7 +25,6 @@ import reactor.netty.http.server.HttpServer;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.List;
@@ -37,10 +35,6 @@ public class AppConfig {
 
     private final ApiRouteRepository routeRepository;
     private final DataInitService dataInitService;
-
-    static {
-        Security.addProvider(new BouncyCastleProvider());
-    }
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
@@ -92,7 +86,8 @@ public class AppConfig {
                 .doOnConnection(connection -> connection.addHandlerLast(new LogbookServerHandler(logbook)));
     }
 
-    @Bean KeyPair selfSingKeyPair() {
+    @Bean
+    KeyPair selfSingKeyPair() {
         try {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
             keyPairGenerator.initialize(2048);
@@ -124,7 +119,6 @@ public class AppConfig {
             X509CertificateHolder certHolder = certBuilder.build(contentSigner);
 
             return new JcaX509CertificateConverter()
-                    .setProvider("BC")
                     .getCertificate(certHolder);
         } catch (Exception ex) {
             throw new RuntimeException("selfSignCertificate error : " + ex.getMessage());

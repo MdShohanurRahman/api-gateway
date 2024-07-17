@@ -29,6 +29,8 @@ logging:
   file:
     name: logs/api-gateway.log
   level:
+    reactor:
+      netty: DEBUG
     root: INFO
     org:
       zalando:
