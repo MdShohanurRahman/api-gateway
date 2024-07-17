@@ -6,6 +6,13 @@ import my.com.liberty.apigateway.entity.ApiRoute;
 import my.com.liberty.apigateway.filter.CustomRouteFilter;
 import my.com.liberty.apigateway.repository.ApiRouteRepository;
 import my.com.liberty.apigateway.service.DataInitService;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -16,14 +23,24 @@ import org.zalando.logbook.netty.LogbookServerHandler;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.http.server.HttpServer;
 
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.Security;
+import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.List;
 
 @Configuration
 @AllArgsConstructor
-public class ApiGateWayConfig {
+public class AppConfig {
 
     private final ApiRouteRepository routeRepository;
     private final DataInitService dataInitService;
+
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
@@ -75,4 +92,42 @@ public class ApiGateWayConfig {
                 .doOnConnection(connection -> connection.addHandlerLast(new LogbookServerHandler(logbook)));
     }
 
+    @Bean KeyPair selfSingKeyPair() {
+        try {
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(2048);
+            return keyPairGenerator.generateKeyPair();
+        } catch (Exception ex) {
+            throw new RuntimeException("selfSingKeyPair error : " + ex.getMessage());
+        }
+    }
+
+    @Bean
+    public X509Certificate selfSignCertificate(KeyPair selfSingKeyPair) {
+        try {
+            X500Name issuerName = new X500Name("CN=Company Sdn Bhd, C=MY, O=Company Sdn Bhd");
+            BigInteger serial = BigInteger.valueOf(System.currentTimeMillis());
+            Date notBefore = new Date(System.currentTimeMillis() - 1000L * 60 * 60 * 24);
+            Date notAfter = new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365);
+
+            JcaX509v3CertificateBuilder certBuilder = new JcaX509v3CertificateBuilder(
+                    issuerName,
+                    serial,
+                    notBefore,
+                    notAfter,
+                    issuerName,
+                    selfSingKeyPair.getPublic()
+            );
+
+            ContentSigner contentSigner = new JcaContentSignerBuilder("SHA256WithRSA")
+                    .build(selfSingKeyPair.getPrivate());
+            X509CertificateHolder certHolder = certBuilder.build(contentSigner);
+
+            return new JcaX509CertificateConverter()
+                    .setProvider("BC")
+                    .getCertificate(certHolder);
+        } catch (Exception ex) {
+            throw new RuntimeException("selfSignCertificate error : " + ex.getMessage());
+        }
+    }
 }
