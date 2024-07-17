@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -36,8 +35,7 @@ public class SignDocumentService {
 
     public SignDocumentResponse signDocument(SignDocumentRequest request) {
         // Prepare document data
-        Map<String, Object> document = request.getDocument();
-        JsonNode rootNode = objectMapper.valueToTree(document);
+        JsonNode rootNode = objectMapper.valueToTree(request.getDocument());
         String docString = minifyJson(rootNode);
 
         // Generate document hash
