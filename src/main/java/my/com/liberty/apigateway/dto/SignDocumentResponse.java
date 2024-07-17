@@ -1,5 +1,6 @@
 package my.com.liberty.apigateway.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,5 +10,5 @@ import lombok.Setter;
 @Getter
 public class SignDocumentResponse {
     private String environment;
-    private String document;
+    private JsonNode document;
 }

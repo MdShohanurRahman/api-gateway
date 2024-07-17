@@ -126,7 +126,7 @@ public class SignDocumentService {
 
         SignDocumentResponse response = new SignDocumentResponse();
         response.setEnvironment(request.getEnvironment());
-        response.setDocument(minifyJson(rootNode));
+        response.setDocument(rootNode);
 
         return response;
     }
