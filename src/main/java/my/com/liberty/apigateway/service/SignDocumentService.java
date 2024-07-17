@@ -118,7 +118,7 @@ public class SignDocumentService {
 
         // Append UBLExtensions & Signature
         JsonNode invoiceNode = rootNode.path("Invoice");
-        if (invoiceNode.isObject()) {
+        if (invoiceNode.isArray()) {
             ObjectNode invoiceNodeObject = (ObjectNode) invoiceNode.get(0);
             invoiceNodeObject.set("UBLExtensions", sampleSignNode.path("UBLExtensions"));
             invoiceNodeObject.set("Signature", sampleSignNode.path("Signature"));

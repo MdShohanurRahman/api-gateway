@@ -1,6 +1,6 @@
 [
   {
-    "path": "/eInvoice-preprod-service/**",
+    "path": "/eInvoice-preprod/**",
     "authKey": "123",
     "uri": "https://preprod-api.myinvois.hasil.gov.my"
   }
